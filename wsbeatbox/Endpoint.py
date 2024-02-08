@@ -46,7 +46,6 @@ class BasicEndpoint:
         for handler in self._handlers._upgrade_handlers:
             handler(response, request, socket_context)
 
-
         key = request.get_header("sec-websocket-key")
         extensions = request.get_header("sec-websocket-extensions")
         protocol = request.get_header("sec-websocket-protocol")
@@ -74,18 +73,17 @@ class BasicEndpoint:
     def _on_close(self, ws: WebSocket, code: int, reason: str):
         # print("Closed", ws, code, reason)
         self.sockets.pop(ws.get_user_data_uuid())
-        
+
         # Executing close handlers
         for handler in self._handlers._close_handlers:
             handler(ws, code, reason)
 
     def _on_message(self, ws: WebSocket, message: str, opcode: OpCode):
         # print("Message", ws, message, opcode)
-        
+
         # Executing message handlers
         for handler in self._handlers._message_handlers:
             handler(ws, message, opcode)
-            
 
         try:
             message_json = decode_incoming_message(message, opcode)
@@ -105,15 +103,15 @@ class BasicEndpoint:
 
     def _on_drain(self, ws: WebSocket):
         # print("Drain", ws)
-        
+
         # Executing drain handlers
         for handler in self._handlers._drain_handlers:
             handler(ws)
 
     def _on_subscription(self, ws: WebSocket, topic: str, subscriptions: Any, subscriptions_before: Any):
         # print("Subscription", ws, topic,
-            #   subscriptions, subscriptions_before)
-        
+        #   subscriptions, subscriptions_before)
+
         # Executing subscription handlers
         for handler in self._handlers._subscription_handlers:
             handler(ws, topic, subscriptions, subscriptions_before)
