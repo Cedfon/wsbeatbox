@@ -1,45 +1,23 @@
-import inspect
-from inspect import FullArgSpec, get_annotations
 import time
-import json
-from typing import TypedDict, Callable
 from socketify import App, WebSocket, Response, Request, AppListenOptions, AppOptions
 
 
-from wsbeatbox import BasicEndpoint
+from wsbeatbox.Endpoint import BasicEndpoint
 
 app = App()
 router = app.router()
 test_endpoint = BasicEndpoint("/ws", app)
 
 
-class TestType(TypedDict):
-    a: int
-    b: str
-    c: dict
-
 @test_endpoint.handlers.action("test")
-def test(obj: TestType):
-    """This is the doc for the `test` action"""
-    print("Test Action", obj)
+def test():
+    print("Test Action")
 
 
-@router.get("/introspect")
+@router.get("/")
 def index(response: Response, request: Request):
-    """
-    Testing ws endpoint introspection functionality.
-    
-    go to: http://{SERVER_HOST}/introspect
-    """
-    
-    # Gettin' the `fullargspec` and `doc` properties of the declared action instance and then converting it to a list of dictionaries to be serialized to JSON
-    results = list(map(lambda value: dict(
-        doc=value["doc"], fullargspec=value["fullargspec"]), test_endpoint.handlers._actions.values()))
-
-    json_dict = dict.fromkeys(test_endpoint.handlers._actions.keys(), results)
-
-    response.write(json.dumps(json_dict))
-    response.end("")
+    print("Request", request)
+    response.end(time.time())
 
 
 @test_endpoint.handlers.open()

@@ -1,4 +1,3 @@
-import inspect
 from socketify import OpCode
 import re
 import json
@@ -63,37 +62,3 @@ def decode_incoming_message(message: str, opcode: OpCode):
                 "Action message received without an identifier")
 
         return message_json
-
-
-def traverse_annotations(annotations: dict):
-    """
-    Traverse the annotations dict in order to return a JSON object containing only all the primitive type annotations.
-    Example:
-    ```py
-        class TypeB:
-            c: str
-            d: dict = { e: Date }
-
-        class TypeA:
-            a: int
-            b: TypeB
-
-        traverse_annotations(inspect.get_annotations(TypeA)) # {'a': 'int', 'b': {'c': 'str', 'd': {'e': 'Date'}}}
-    ```     
-    """
-    def _inner_traverse_annotations(annotations: dict):
-        result = {}
-
-        for key, value in annotations.items():
-            if inspect.isclass(value) and not issubclass(value, (int, float, str, bool)):
-                result[key] = traverse_annotations(
-                    inspect.get_annotations(value))
-            else:
-                try:
-                    result[key] = value.__name__
-                except Exception as err:
-                    result[key] = str(value)
-
-        return result
-
-    return _inner_traverse_annotations(annotations)

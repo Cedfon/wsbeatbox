@@ -1,4 +1,3 @@
-from inspect import FullArgSpec
 from socketify import CompressOptions, WebSocket, OpCode, Request, Response
 from typing import TypedDict, Callable, Any, Optional
 from enum import IntEnum
@@ -26,8 +25,6 @@ class EndpointBehavior(EndpointBaseBehavior, EndpointBehaviorHandlers):
 class EndpointControlItemDefinition(TypedDict):
     name: str
     func: Callable
-    fullargspec: FullArgSpec
-    doc: Optional[str]
 
 
 class EndpointActionControl(EndpointControlItemDefinition):
